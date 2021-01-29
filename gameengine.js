@@ -5,11 +5,20 @@ class GameEngine {
         this.entities = [];
         this.showOutlines = false;
         this.ctx = null;
-        this.click = null;
-        this.mouse = null;
-        this.wheel = null;
         this.surfaceWidth = null;
         this.surfaceHeight = null;
+		
+		// Mouse Flags
+        /*this.click = null;
+        this.mouse = null;
+        this.wheel = null;*/
+		
+		// Keyboard Flags
+		this.up = null;
+		this.down = null;
+		this.left = null;
+		this.right = null;
+		this.space = null;
     };
 
     init(ctx) {
@@ -30,14 +39,68 @@ class GameEngine {
 
     startInput() {
         var that = this;
-
+		
+		// Keyboard Controls
+		this.ctx.canvas.addEventListener("keydown", function (e) {
+			console.log("KeyDown");
+			switch (e.code) {
+				case "KeyW":
+				case "ArrowUp":
+					if (!that.up) {
+						that.up = true;
+						setTimeout(function () {
+							that.up = false;
+							console.log('Jump End');
+						}, 50)
+					}
+					break;
+				case "KeyS":
+				case "ArrowDown":
+					that.down = true;
+					break;
+				case "KeyA":
+				case "ArrowLeft":
+					that.left = true;
+					break;
+				case "KeyD":
+				case "ArrowRight":
+					that.right = true;
+					break;
+			}
+		}, false);
+		
+		this.ctx.canvas.addEventListener("keyup", function (e) {
+			console.log("KeyUp");
+			switch (e.code) {
+				case "KeyW":
+				case "ArrowUp":
+				case "Space":
+					//that.up = false;
+					break;
+				case "KeyS":
+				case "ArrowDown":
+					that.down = false;
+					break;
+				case "KeyA":
+				case "ArrowLeft":
+					that.left = false;
+					break;
+				case "KeyD":
+				case "ArrowRight":
+					that.right = false;
+					break;
+			}
+		}, false);
+		
+		// Mouse Controls
+		/*
         var getXandY = function (e) {
             var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
             var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
 
             return { x: x, y: y };
         }
-
+		
         this.ctx.canvas.addEventListener("mousemove", function (e) {
             //console.log(getXandY(e));
             that.mouse = getXandY(e);
@@ -59,7 +122,7 @@ class GameEngine {
             //console.log(getXandY(e));
             that.rightclick = getXandY(e);
             e.preventDefault();
-        }, false);
+        }, false);*/
     };
 
     addEntity(entity) {
