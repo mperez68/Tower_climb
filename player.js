@@ -1,7 +1,7 @@
 class Player {
 	constructor(game, x, y) {
 		// Constants
-		this.JUMP = 8;
+		this.JUMP = 50;
 		this.MAX_X = 20;
 		this.X_ACCELERATION = 3;
 		this.GRAVITY = 1;
@@ -10,12 +10,14 @@ class Player {
 		this.WIDTH = 500;
 		this.HEIGHT = 500;
 		this.SCALE = 0.3;
-		this.PAGE_HEIGHT = 900;
-		this.PAGE_WIDTH = 768;
 		Object.assign(this, { game, x, y });
 		
 		this.xSpeed = 0;
 		this.ySpeed = 0;
+		
+		this.grounded = false;
+		
+		this.game.player = this;
 		
 		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/player.png");
 		
@@ -23,12 +25,13 @@ class Player {
 	}	//spritesheet, xStart, yStart, width, height, frameCount, frameDuration, framePadding, reverse, loop
 	
 	update () {
-		// Gravity Tick
-		if (this.y < this.PAGE_HEIGHT - (this.HEIGHT * this.SCALE)) {
+		// Gravity
+		if (this.y < PARAMS.PAGE_HEIGHT - (this.HEIGHT * this.SCALE)) {
 			this.ySpeed += this.GRAVITY;
 		} else {
-			this.y = this.PAGE_HEIGHT - (this.HEIGHT * this.SCALE);
+			this.y = PARAMS.PAGE_HEIGHT - (this.HEIGHT * this.SCALE);
 			this.ySpeed = 0;
+			this.grounded = true;
 		}
 		
 		// Friction
@@ -47,7 +50,8 @@ class Player {
 		
 		// Acceleration
 		if(this.game.up){
-			if (this.ySpeed <= 1) {
+			if (this.grounded) {
+				this.grounded = false;
 				this.ySpeed -= this.JUMP;
 			}
 		} else if (this.game.down) {
@@ -67,6 +71,6 @@ class Player {
 	}
 	
 	draw(ctx) {
-		this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y, this.SCALE);
+		this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.game.camera.y, this.SCALE);
 	}
 }

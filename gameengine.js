@@ -46,6 +46,7 @@ class GameEngine {
 			switch (e.code) {
 				case "KeyW":
 				case "ArrowUp":
+				case "Space":
 					if (!that.up) {
 						that.up = true;
 						setTimeout(function () {
@@ -134,6 +135,7 @@ class GameEngine {
         for (var i = 0; i < this.entities.length; i++) {
             this.entities[i].draw(this.ctx);
         }
+		this.camera.draw(this.ctx);
     };
 
     update() {
@@ -152,6 +154,7 @@ class GameEngine {
                 this.entities.splice(i, 1);
             }
         }
+		this.camera.update();
     };
 
     loop() {
