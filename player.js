@@ -1,7 +1,7 @@
 class Player {
 	constructor(game, x, y) {
 		// Constants
-		this.JUMP = 8;
+		this.JUMP = 10;
 		this.MAX_X = 20;
 		this.X_ACCELERATION = 3;
 		this.GRAVITY = 1;
@@ -59,6 +59,11 @@ class Player {
 		} else if (this.game.right) {
 			// hold speed to right
 			this.xSpeed += this.X_ACCELERATION;
+		}
+		
+		// Walls TODO move to collision
+		if (this.x < 0 || this.x + this.WIDTH * this.SCALE > this.PAGE_WIDTH) {
+			this.xSpeed = -this.xSpeed;
 		}
 		
 		// Update Location
