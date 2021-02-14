@@ -22,7 +22,13 @@ class Player {
 		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/player.png");
 		
 		this.animation = new Animator(this.spritesheet, 0, 0, this.WIDTH, this.HEIGHT, 1, 1, 0, false, true);
+		
+		this.updateBB();
 	}	//spritesheet, xStart, yStart, width, height, frameCount, frameDuration, framePadding, reverse, loop
+	
+	updateBB() {
+		this.BB = new BoundingBox(this.x, this.y, this.WIDTH * this.SCALE, this.HEIGHT * this.SCALE);
+	}
 	
 	update () {
 		// Gravity
@@ -74,9 +80,19 @@ class Player {
 		// Update Location
 		this.x += this.xSpeed;
 		this.y += this.ySpeed;
+		
+		// Update Bounding Box
+		this.updateBB();
+		
+		// Collisions
 	}
 	
 	draw(ctx) {
 		this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.game.camera.y, this.SCALE);
+		
+		if (PARAMS.DEBUG) {
+            ctx.strokeStyle = 'Red';
+            ctx.strokeRect(this.BB.x - this.game.camera.x - (this.WIDTH * this.SCALE / 2), this.BB.y - this.game.camera.y - (this.WIDTH / 2), this.BB.width, this.BB.height);
+        }
 	}
 }

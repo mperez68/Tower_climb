@@ -14,7 +14,11 @@ class SceneManager {
 		//
 		
 		this.loadLevelOne();
-	}
+	};
+	
+	clearEntities() {
+        this.game.entities = [];
+    };
 	
 	loadLevelOne() {
 		// Background
@@ -29,16 +33,22 @@ class SceneManager {
 
 		// Player
 		this.game.addEntity(new Player(this.game, 50, 50));
-	}
+	};
 	
 	update() { // TODO replace with constants
+		if (this.game.restart) {
+			this.game.restart = false;
+			this.clearEntities();
+			this.loadLevelOne();
+		}
+		
 		let yMidpoint = PARAMS.PAGE_WIDTH / 2 - 500 / 2;
 		if (this.game.player.y < yMidpoint) {
 			this.y = this.game.player.y - yMidpoint;
 		}
-	}
+	};
 	
 	draw(ctx) {
 		//
-	}
+	};
 }

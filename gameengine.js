@@ -7,6 +7,7 @@ class GameEngine {
         this.ctx = null;
         this.surfaceWidth = null;
         this.surfaceHeight = null;
+		this.restart = false;
 		
 		// Mouse Flags
         /*this.click = null;
@@ -66,6 +67,9 @@ class GameEngine {
 				case "KeyD":
 				case "ArrowRight":
 					that.right = true;
+					break;
+				case "KeyR":
+					that.restart = true;
 					break;
 			}
 		}, false);
