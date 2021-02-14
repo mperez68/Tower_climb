@@ -26,10 +26,15 @@ class SceneManager {
 		this.game.addEntity(new Background(this.game, 0, -PARAMS.PAGE_HEIGHT));
 		
 		// Platforms
-		this.game.addEntity(new Platform(this.game, 100, 500));
-		this.game.addEntity(new Platform(this.game, 400, 300));
-		this.game.addEntity(new Platform(this.game, 100, 200));
-		this.game.addEntity(new Platform(this.game, 400, 100));
+		this.game.addEntity(new Platform(this.game, 100, 500, 0.7));
+		this.game.addEntity(new Platform(this.game, 400, 300, 0.7));
+		this.game.addEntity(new Platform(this.game, 100, 200, 0.7));
+		this.game.addEntity(new Platform(this.game, 400, 100, 0.7));
+		// Floor
+		this.game.addEntity(new Platform(this.game,   0, 650, 1));
+		this.game.addEntity(new Platform(this.game, 200, 650, 1));
+		this.game.addEntity(new Platform(this.game, 400, 650, 1));
+		this.game.addEntity(new Platform(this.game, 600, 650, 1));
 
 		// Player
 		this.game.addEntity(new Player(this.game, 50, 50));

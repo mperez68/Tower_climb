@@ -43,7 +43,7 @@ class GameEngine {
 		
 		// Keyboard Controls
 		this.ctx.canvas.addEventListener("keydown", function (e) {
-			console.log("KeyDown");
+			//console.log("KeyDown");
 			switch (e.code) {
 				case "KeyW":
 				case "ArrowUp":
@@ -75,7 +75,7 @@ class GameEngine {
 		}, false);
 		
 		this.ctx.canvas.addEventListener("keyup", function (e) {
-			console.log("KeyUp");
+			//console.log("KeyUp");
 			switch (e.code) {
 				case "KeyW":
 				case "ArrowUp":
