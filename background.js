@@ -1,8 +1,12 @@
 class Background {
 	constructor(game, x, y) {
+		this.WIDTH = 768;
+		this.HEIGHT = 1357;
 		Object.assign(this, { game, x, y });
 		
 		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Background-1.png");
+		
+		this.animation = new Animator(this.spritesheet, 0, 0, this.WIDTH, this.HEIGHT, 1, 1, 0, false, true);
 	}
 	
 	update() {
@@ -10,12 +14,7 @@ class Background {
 	}
 	
 	draw(ctx) {
-		let xMidpoint = PARAMS.PAGE_WIDTH / 2;
-		
-		ctx.drawImage(this.spritesheet, PARAMS.BG_WIDTH / 2 - xMidpoint, 0,
-		    PARAMS.BG_WIDTH, PARAMS.PAGE_HEIGHT,
-			this.x, this.y - this.game.camera.y,
-			PARAMS.BG_WIDTH, PARAMS.PAGE_HEIGHT);
+		this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.game.camera.y, PARAMS.PAGE_WIDTH / this.WIDTH);
 	}
 }
 

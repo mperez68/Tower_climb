@@ -50,10 +50,11 @@ class GameEngine {
 				case "Space":
 					if (!that.up) {
 						that.up = true;
+						console.log('Jump Start');
 						setTimeout(function () {
 							that.up = false;
 							console.log('Jump End');
-						}, 50)
+						}, 150)
 					}
 					break;
 				case "KeyS":
@@ -143,6 +144,12 @@ class GameEngine {
     };
 
     update() {
+		if (document.getElementById("myDebug").checked) {
+			PARAMS.DEBUG = true;
+		} else {
+			PARAMS.DEBUG = false;
+		}
+		
         var entitiesCount = this.entities.length;
 
         for (var i = 0; i < entitiesCount; i++) {

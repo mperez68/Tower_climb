@@ -1,11 +1,20 @@
 class SceneManager {
 	constructor(game) {
-		Object.assign(this, { game });
+		// Constants
+		this.SCROLL_INCREMENT = 0.25;
 		
+		Object.assign(this, { game });
 		this.game = game;
 		this.game.camera = this;
 		this.x = 0;
-		this.y = 0;	
+		this.y = -(PARAMS.PAGE_HEIGHT);	
+		this.timeScore = 0;
+		this.heightScore = 0;
+		this.score = 0;
+		this.bestY = 0;
+		this.scrollSpeed = 0;
+        this.elapsedTime = 0;
+		this.running = false;
 		
 		// HUD variables
 		//
@@ -21,39 +30,96 @@ class SceneManager {
     };
 	
 	loadLevelOne() {
+		this.bestY = 0;
+		this.score = 0;
+		this.timeScore = 0;
+		this.heightScore = 0;
+		this.scrollSpeed = 0;
+		this.elapsedTime = 0;
+		this.running = false;
+		
 		// Background
-		this.game.addEntity(new Background(this.game, 0, 0));
-		this.game.addEntity(new Background(this.game, 0, -PARAMS.PAGE_HEIGHT));
+		let xMidpoint = (PARAMS.PAGE_WIDTH - PARAMS.BG_WIDTH) / 2;
+		for (var i = 1; i < 50; i++) {
+			this.game.addEntity(new Background(this.game, 0, -i * PARAMS.PAGE_HEIGHT));
+		}
 		
 		// Platforms
-		this.game.addEntity(new Platform(this.game, 100, 500, 0.7));
-		this.game.addEntity(new Platform(this.game, 400, 300, 0.7));
-		this.game.addEntity(new Platform(this.game, 100, 200, 0.7));
-		this.game.addEntity(new Platform(this.game, 400, 100, 0.7));
+		let levels = 100;
+		for (var i = 1; i < levels; i++) {
+			let platforms = Math.ceil((levels - i) / 20);
+			for (var j = 0; j < platforms; j++){
+				this.game.addEntity(new Platform(this.game, Math.random() * (PARAMS.PAGE_WIDTH / platforms) + (j * (PARAMS.PAGE_WIDTH / platforms)) - PARAMS.PLATFORM_WIDTH / 2, -i * 200, 1)); // 1 - (0.01 * i)
+			}
+		}
+		
 		// Floor
-		this.game.addEntity(new Platform(this.game,   0, 650, 1));
-		this.game.addEntity(new Platform(this.game, 200, 650, 1));
-		this.game.addEntity(new Platform(this.game, 400, 650, 1));
-		this.game.addEntity(new Platform(this.game, 600, 650, 1));
+		this.game.addEntity(new Platform(this.game,-50, -50, 1));
+		this.game.addEntity(new Platform(this.game, 150, -50, 1));
+		this.game.addEntity(new Platform(this.game, 350, -50, 1));
+		this.game.addEntity(new Platform(this.game, 550, -50, 1));
+		this.game.addEntity(new Platform(this.game, 750, -50, 1));
+		this.game.addEntity(new Platform(this.game, 950, -50, 1));
 
 		// Player
-		this.game.addEntity(new Player(this.game, 50, 50));
+		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, -100));
 	};
 	
-	update() { // TODO replace with constants
+	update() {
+		// Restart game
 		if (this.game.restart) {
 			this.game.restart = false;
 			this.clearEntities();
 			this.loadLevelOne();
+			this.y = -(PARAMS.PAGE_HEIGHT);	
 		}
 		
-		let yMidpoint = PARAMS.PAGE_WIDTH / 2 - 500 / 2;
-		if (this.game.player.y < yMidpoint) {
-			this.y = this.game.player.y - yMidpoint;
+		// Timer, time score
+		if (this.game.player.y < -125) {
+			this.elapsedTime += this.game.clockTick;
+		if (!this.running) {
+			this.running = true;
+			this.scrollSpeed += this.SCROLL_INCREMENT;
 		}
+		}
+		if (this.elapsedTime > 30) {
+			this.elapsedTime = 0;
+			this.scrollSpeed += this.SCROLL_INCREMENT;
+			this.timeScore += this.scrollSpeed * 10000;
+		}
+		
+		// Update height score
+		this.bestY = Math.min(this.bestY, this.game.player.y + 101);
+		this.heightScore = -this.bestY;
+		
+		// total score
+		this.score = this.heightScore + this.timeScore;
+		
+		// Scroll map
+		this.y -= this.scrollSpeed;
+		
+		// Follow player
+		let pushpoint = PARAMS.PAGE_WIDTH / 4;
+
+        if (this.y > this.game.player.y - pushpoint) this.y = this.game.player.y - pushpoint;
+		
+		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y) this.game.restart = true;
 	};
 	
 	draw(ctx) {
-		//
+		let scoreText = "SCORE: " + this.score + " ";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Arial";
+		ctx.strokeText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
+		
+		let timeText = "";
+		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(30 - this.elapsedTime) + " ";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Arial";
+		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 100);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(timeText, PARAMS.PAGE_WIDTH / 2, 100);
 	};
 }

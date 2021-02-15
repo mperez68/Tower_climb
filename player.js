@@ -1,7 +1,7 @@
 class Player {
 	constructor(game, x, y) {
 		// Constants
-		this.JUMP = 28;
+		this.JUMP = 25;
 		this.MAX_X = 20;
 		this.X_ACCELERATION = 1;
 		this.GRAVITY = 1;
@@ -74,7 +74,11 @@ class Player {
 		
 		// Walls TODO move to collision
 		if (this.x < 0 || this.x + this.WIDTH * this.SCALE > PARAMS.PAGE_WIDTH) {
-			this.xSpeed = -this.xSpeed;
+			this.xSpeed = -this.xSpeed / 2;
+			if (this.game.up) {
+				this.xSpeed += this.xSpeed;
+				this.ySpeed -= this.JUMP;
+			}
 			this.x = Math.round(this.x / PARAMS.PAGE_WIDTH) * (PARAMS.PAGE_WIDTH - this.WIDTH * this.SCALE);
 			//console.log("bounce @ (" + this.x + "," + this.y + ")");
 		}
@@ -107,7 +111,7 @@ class Player {
             ctx.strokeStyle = 'Red';
             ctx.strokeRect(this.BB.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
 			
-			let coordText = "B: (" + this.BB.top + ") T: (" + this.BB.bottom + ")";
+			let coordText = "(" + Math.floor(this.BB.x) + "," + Math.floor(this.BB.y) + ")";
 			ctx.strokeStyle = 'White';
 			ctx.font = "30px Arial";
 			ctx.strokeText(coordText, 50, 50);
