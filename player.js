@@ -77,7 +77,8 @@ class Player {
 			this.xSpeed = -this.xSpeed / 2;
 			if (this.game.up) {
 				this.xSpeed += this.xSpeed;
-				this.ySpeed -= this.JUMP;
+				this.ySpeed -= this.JUMP * Math.abs(this.xSpeed / this.MAX_X);
+				console.log(Math.abs(this.xSpeed / this.MAX_X));
 			}
 			this.x = Math.round(this.x / PARAMS.PAGE_WIDTH) * (PARAMS.PAGE_WIDTH - this.WIDTH * this.SCALE);
 			//console.log("bounce @ (" + this.x + "," + this.y + ")");
