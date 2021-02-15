@@ -10,6 +10,7 @@ class SceneManager {
 		this.y = -(PARAMS.PAGE_HEIGHT);	
 		this.timeScore = 0;
 		this.heightScore = 0;
+		this.highScore = 0;
 		this.score = 0;
 		this.bestY = 0;
 		this.scrollSpeed = 0;
@@ -68,6 +69,7 @@ class SceneManager {
 	update() {
 		// Restart game
 		if (this.game.restart) {
+			this.highScore = Math.max(this.highScore, this.score);
 			this.game.restart = false;
 			this.clearEntities();
 			this.loadLevelOne();
@@ -114,12 +116,19 @@ class SceneManager {
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
 		
+		let highScoreText = "HIGH SCORE: " + this.highScore;
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Arial";
+		ctx.strokeText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
+		
 		let timeText = "";
 		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(30 - this.elapsedTime) + " ";
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
-		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 100);
+		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
 		ctx.strokeStyle = 'Black';
-		ctx.fillText(timeText, PARAMS.PAGE_WIDTH / 2, 100);
+		ctx.fillText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
 	};
 }
