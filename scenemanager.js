@@ -41,27 +41,30 @@ class SceneManager {
 		
 		// Background
 		let xMidpoint = (PARAMS.PAGE_WIDTH - PARAMS.BG_WIDTH) / 2;
-		for (var i = 1; i < 50; i++) {
+		for (var i = 0; i < 50; i++) {
 			this.game.addEntity(new Background(this.game, 0, -i * PARAMS.PAGE_HEIGHT));
 		}
 		
 		// Platforms
+		let platsPerPhase = 20;
 		let levels = 100;
-		for (var i = 1; i < levels; i++) {
-			let platforms = Math.ceil((levels - i) / 20);
-			for (var j = 0; j < platforms; j++){
-				this.game.addEntity(new Platform(this.game, Math.random() * (PARAMS.PAGE_WIDTH / platforms) + (j * (PARAMS.PAGE_WIDTH / platforms)) - PARAMS.PLATFORM_WIDTH / 2, -i * 200, 1)); // 1 - (0.01 * i)
+		let platHeight = 250;
+		let startHeight = -50;
+		
+		for (var i = 0; i < levels; i++) {
+			let platforms = Math.ceil((levels - i) / platsPerPhase);
+			if (i % platsPerPhase == 0) {
+				for (var j = 0; j < 6; j++) {
+					this.game.addEntity(new Platform(this.game, (j * 200), startHeight - i * platHeight, 1));
+				}
+				// TODO text object
+			} else {
+				for (var j = 0; j < platforms; j++){
+					this.game.addEntity(new Platform(this.game, Math.random() * (PARAMS.PAGE_WIDTH / platforms) + (j * (PARAMS.PAGE_WIDTH / platforms)) - PARAMS.PLATFORM_WIDTH / 2, startHeight - i * platHeight, 1)); // 1 - (0.01 * i)
+				}
 			}
 		}
 		
-		// Floor
-		this.game.addEntity(new Platform(this.game,-50, -50, 1));
-		this.game.addEntity(new Platform(this.game, 150, -50, 1));
-		this.game.addEntity(new Platform(this.game, 350, -50, 1));
-		this.game.addEntity(new Platform(this.game, 550, -50, 1));
-		this.game.addEntity(new Platform(this.game, 750, -50, 1));
-		this.game.addEntity(new Platform(this.game, 950, -50, 1));
-
 		// Player
 		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, -110));
 	};
@@ -109,6 +112,8 @@ class SceneManager {
 	};
 	
 	draw(ctx) {
+		ctx.textAlign  = "center";
+		
 		let scoreText = "SCORE: " + this.score + " ";
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
@@ -124,7 +129,7 @@ class SceneManager {
 		ctx.fillText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
 		
 		let timeText = "";
-		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(10 - this.elapsedTime) + " ";
+		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(11 - this.elapsedTime) + " ";
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
 		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 150);

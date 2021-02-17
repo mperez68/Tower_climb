@@ -54,7 +54,7 @@ class GameEngine {
 						setTimeout(function () {
 							that.up = false;
 							console.log('Jump End');
-						}, 150)
+						}, 100)
 					}
 					break;
 				case "KeyS":

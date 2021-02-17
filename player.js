@@ -15,20 +15,19 @@ class Player {
 		this.BB_HEIGHT = 60;
 		this.BB_WIDTH_OPFSET = (this.WIDTH - this.BB_WIDTH) / 2;
 		this.BB_HEIGHT_OPFSET = (this.HEIGHT - this.BB_HEIGHT) / 2;
+		// Local variables
 		Object.assign(this, { game, x, y });
 		this.BB = null;
 		this.lastBB = null;
 		this.xSpeed = 0;
 		this.ySpeed = 0;
 		this.isSpinning = false;
-		
 		this.grounded = false;
-		
+		// Assign self to game object
 		this.game.player = this;
 		
-		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/player.png");
 		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/climber.png");
-		
+		// Animations
 		this.standing = new Animator(this.spritesheet, 0, 0, this.WIDTH, this.HEIGHT, 3, 0.5, 0, false, true);
 		this.runningRight = new Animator(this.spritesheet, this.WIDTH * 3, 0, this.WIDTH, this.HEIGHT, 4, 0.1, 0, false, true);
 		this.runningLeft = new Animator(this.spritesheet, this.WIDTH * 3, this.HEIGHT, this.WIDTH, this.HEIGHT, 4, 0.1, 0, false, true);
@@ -68,13 +67,14 @@ class Player {
 		
 		// Acceleration
 		if(this.game.up){
-			if (this.grounded) {
+			if (this.grounded && this.ySpeed <= 2) {
+				this.game.up = false;
 				this.grounded = false;
 				this.ySpeed -= this.JUMP;
 			}
 		} else if (this.game.down) {
 			// nothing
-		}
+		} 
 		if(this.game.left){
 			// hold speed to left
 			this.xSpeed -= 0.3 * this.X_ACCELERATION;
@@ -89,6 +89,7 @@ class Player {
 		if (this.x < 0 || this.x + this.WIDTH * this.SCALE > PARAMS.PAGE_WIDTH) {
 			this.xSpeed = -this.xSpeed / 2;
 			if (this.game.up) {
+				this.game.up = false;
 				this.isSpinning = true;
 				this.xSpeed += this.xSpeed;
 				this.ySpeed -= this.JUMP * Math.abs(this.xSpeed / this.MAX_X);
@@ -149,12 +150,12 @@ class Player {
             ctx.strokeStyle = 'Red';
             ctx.strokeRect(this.BB.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
 			
-			let coordText = "(" + Math.floor(this.BB.x) + "," + Math.floor(this.BB.y) + ")";
+			let debugText = "(" + Math.floor(this.xSpeed) + "," + Math.floor(this.ySpeed) + ")";
 			ctx.strokeStyle = 'White';
 			ctx.font = "30px Arial";
-			ctx.strokeText(coordText, 50, 50);
+			ctx.strokeText(debugText, 50, 50);
 			ctx.strokeStyle = 'Black';
-			ctx.fillText(coordText, 50, 50);
+			ctx.fillText(debugText, 50, 50);
         }
 	}
 }
