@@ -63,7 +63,7 @@ class SceneManager {
 		this.game.addEntity(new Platform(this.game, 950, -50, 1));
 
 		// Player
-		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, -100));
+		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, -110));
 	};
 	
 	update() {
@@ -84,7 +84,7 @@ class SceneManager {
 			this.scrollSpeed += this.SCROLL_INCREMENT;
 		}
 		}
-		if (this.elapsedTime > 30) {
+		if (this.elapsedTime > 10) {
 			this.elapsedTime = 0;
 			this.scrollSpeed += this.SCROLL_INCREMENT;
 			this.timeScore += this.scrollSpeed * 10000;
@@ -95,7 +95,7 @@ class SceneManager {
 		this.heightScore = -this.bestY;
 		
 		// total score
-		this.score = this.heightScore + this.timeScore;
+		this.score = Math.floor(this.heightScore + this.timeScore);
 		
 		// Scroll map
 		this.y -= this.scrollSpeed;
@@ -124,7 +124,7 @@ class SceneManager {
 		ctx.fillText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
 		
 		let timeText = "";
-		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(30 - this.elapsedTime) + " ";
+		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(10 - this.elapsedTime) + " ";
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
 		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
