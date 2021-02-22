@@ -36,9 +36,9 @@ class Player {
 		this.jumpingLeft = new Animator(this.spritesheet, this.WIDTH * 8, this.HEIGHT, this.WIDTH, this.HEIGHT, 1, 1, 0, false, true);
 		this.spinningRight = new Animator(this.spritesheet, this.WIDTH * 11, 0, this.HEIGHT, this.HEIGHT, 6, 0.05, 0, false, true);
 		this.spinningLeft = new Animator(this.spritesheet, this.WIDTH * 11, 0, this.HEIGHT, this.HEIGHT, 6, 0.05, 0, true, true);
-		
+			//spritesheet, xStart, yStart, width, height, frameCount, frameDuration, framePadding, reverse, loop
 		this.updateBB();
-	}	//spritesheet, xStart, yStart, width, height, frameCount, frameDuration, framePadding, reverse, loop
+	}
 	
 	updateBB() {
 		this.lastBB = this.BB;

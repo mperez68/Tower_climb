@@ -66,7 +66,7 @@ class SceneManager {
 		}
 		
 		// Player
-		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, -110));
+		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, startHeight - 60));
 	};
 	
 	update() {
@@ -113,21 +113,21 @@ class SceneManager {
 	
 	draw(ctx) {
 		ctx.textAlign  = "center";
-		
+		// Score Text
 		let scoreText = "SCORE: " + this.score + " ";
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
 		ctx.strokeText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
-		
+		// High Score Text
 		let highScoreText = "HIGH SCORE: " + this.highScore;
 		ctx.strokeStyle = 'White';
 		ctx.font = "30px Arial";
 		ctx.strokeText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
-		
+		// Speed Up Text
 		let timeText = "";
 		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(11 - this.elapsedTime) + " ";
 		ctx.strokeStyle = 'White';
@@ -135,5 +135,17 @@ class SceneManager {
 		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
+		// Controls Text
+		let controlText1 = "";
+		let controlText2 = "";
+		if (this.game.player.y > -125) controlText1 = "A & D move left and right. W or Space Bar jumps.";
+		if (this.game.player.y > -125) controlText2 = "Jumping off the wall gives you an extra boost!";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Arial";
+		ctx.strokeText(controlText1, PARAMS.PAGE_WIDTH / 2, 200);
+		ctx.strokeText(controlText2, PARAMS.PAGE_WIDTH / 2, 240);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(controlText1, PARAMS.PAGE_WIDTH / 2, 200);
+		ctx.fillText(controlText2, PARAMS.PAGE_WIDTH / 2, 240);
 	};
 }
