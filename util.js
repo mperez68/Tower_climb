@@ -29,8 +29,10 @@ window.requestAnimFrame = (function () {
 
 var PARAMS = {
 	DEBUG: true,
-	PAGE_HEIGHT: 700,
+	PAGE_HEIGHT: 900,
 	PAGE_WIDTH: 1024,
 	BG_WIDTH: 768,
-	PLATFORM_WIDTH: 101
+	BG_HEIGHT: 1357,
+	PLATFORM_WIDTH: 101,
+	VERSIONS: 5
 };

@@ -1,10 +1,11 @@
 class Background {
-	constructor(game, x, y) {
-		this.WIDTH = 768;
-		this.HEIGHT = 1357;
-		Object.assign(this, { game, x, y });
+	constructor(game, x, y, tier) {
+		this.WIDTH = PARAMS.BG_WIDTH;
+		this.HEIGHT = PARAMS.BG_HEIGHT;
+		Object.assign(this, { game, x, y, tier });
 		
-		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Background-1.png");
+		//console.log("./sprites/Background-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
+		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Background-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
 		
 		this.animation = new Animator(this.spritesheet, 0, 0, this.WIDTH, this.HEIGHT, 1, 1, 0, false, true);
 	}
@@ -16,19 +17,25 @@ class Background {
 	draw(ctx) {
 		this.animation.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.game.camera.y, PARAMS.PAGE_WIDTH / this.WIDTH);
 	}
+	
+	pad(num, size) {
+		num = num.toString();
+		while (num.length < size) num = "0" + num;
+		return num;
+	}
 }
 
 class Platform {
-	constructor(game, x, y, scale) {
+	constructor(game, x, y, scale, tier) {
 		// Constants
 		this.WIDTH = 202;
 		this.HEIGHT = 98;
 		this.SCALE = scale;
 		
-		Object.assign(this, { game, x, y });
+		Object.assign(this, { game, x, y, tier });
 		
-		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Platform-1.png");
-		
+		//console.log("./sprites/Platform-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
+		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Platform-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
 		this.updateBB();
 	}
 	
@@ -37,8 +44,8 @@ class Platform {
 	}
 	
 	update() {
-		//
-		
+		//if (this.game.camera.y + PARAMS.PAGE_HEIGHT < this.y) console.log("deleting old platforms");
+		if (this.game.camera.y + PARAMS.PAGE_HEIGHT < this.y) this.removeFromWorld = true;
 		this.updateBB();
 	}
 	
@@ -52,5 +59,11 @@ class Platform {
             ctx.strokeStyle = 'Red';
             ctx.strokeRect(this.BB.x, this.BB.y - this.game.camera.y, this.BB.width, this.BB.height);
         }
+	}
+	
+	pad(num, size) {
+		num = num.toString();
+		while (num.length < size) num = "0" + num;
+		return num;
 	}
 }

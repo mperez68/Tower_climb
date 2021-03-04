@@ -4,7 +4,6 @@ class SceneManager {
 		this.SCROLL_INCREMENT = 0.25;
 		
 		Object.assign(this, { game });
-		this.game = game;
 		this.game.camera = this;
 		this.x = 0;
 		this.y = -(PARAMS.PAGE_HEIGHT);	
@@ -16,6 +15,8 @@ class SceneManager {
 		this.scrollSpeed = 0;
         this.elapsedTime = 0;
 		this.running = false;
+		this.topOfMap = 0;
+		this.tier = 0;
 		
 		// HUD variables
 		//
@@ -23,60 +24,77 @@ class SceneManager {
 		// HUD animations
 		//
 		
-		this.loadLevelOne();
+		this.loadLevel();
 	};
 	
 	clearEntities() {
         this.game.entities = [];
     };
 	
-	loadLevelOne() {
-		this.bestY = 0;
-		this.score = 0;
-		this.timeScore = 0;
-		this.heightScore = 0;
-		this.scrollSpeed = 0;
-		this.elapsedTime = 0;
-		this.running = false;
+	loadLevel() {
+		console.log("level " + this.tier + " being loaded.");
 		
-		// Background
+		// local variables
 		let xMidpoint = (PARAMS.PAGE_WIDTH - PARAMS.BG_WIDTH) / 2;
-		for (var i = 0; i < 50; i++) {
-			this.game.addEntity(new Background(this.game, 0, -i * PARAMS.PAGE_HEIGHT));
-		}
-		
-		// Platforms
-		let platsPerPhase = 20;
-		let levels = 100;
-		let platHeight = 250;
+		let platsPerPhase = 10;
+		let levels = 50;
+		let platHeight = 225;
 		let startHeight = -50;
-		
+		// Platforms
 		for (var i = 0; i < levels; i++) {
-			let platforms = Math.ceil((levels - i) / platsPerPhase);
+			let platforms = Math.ceil((levels - i) / platsPerPhase) + 1;
 			if (i % platsPerPhase == 0) {
 				for (var j = 0; j < 6; j++) {
-					this.game.addEntity(new Platform(this.game, (j * 200), startHeight - i * platHeight, 1));
-				}
-				// TODO text object
+					this.game.addEntity(new Platform(this.game, (j * 200), this.topOfMap + startHeight - i * platHeight, 1, this.tier));
+					this.game.addEntity(new TextBox(this.game, PARAMS.PAGE_WIDTH / 2, this.topOfMap + startHeight - i * platHeight + 45, this.tier * levels + i));
+				};
 			} else {
 				for (var j = 0; j < platforms; j++){
-					this.game.addEntity(new Platform(this.game, Math.random() * (PARAMS.PAGE_WIDTH / platforms) + (j * (PARAMS.PAGE_WIDTH / platforms)) - PARAMS.PLATFORM_WIDTH / 2, startHeight - i * platHeight, 1)); // 1 - (0.01 * i)
-				}
-			}
+					this.game.addEntityToFront(new Platform(this.game,
+										Math.random() * (PARAMS.PAGE_WIDTH / platforms) + (j * (PARAMS.PAGE_WIDTH / platforms)) - PARAMS.PLATFORM_WIDTH / 2,
+										this.topOfMap + startHeight - i * platHeight, 1, this.tier));
+				};
+			};
+		};
+		
+		// Background
+		let yPointer = this.topOfMap -(levels * platHeight);
+		while (yPointer < this.topOfMap ) {
+			this.game.addEntityToFront(new Background(this.game, 0, yPointer, this.tier));
+			yPointer += PARAMS.BG_WIDTH;
 		}
 		
 		// Player
-		this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, startHeight - 60));
+		if (this.tier == 0) {
+			this.bestY = 0;
+			this.score = 0;
+			this.timeScore = 0;
+			this.heightScore = 0;
+			this.scrollSpeed = 0;
+			this.elapsedTime = 0;
+			this.game.addEntity(new Player(this.game, PARAMS.PAGE_WIDTH / 2 - 25, startHeight - 60));
+			this.running = false;
+		};
+		
+		this.topOfMap -= levels * platHeight;
 	};
 	
 	update() {
 		// Restart game
 		if (this.game.restart) {
-			this.highScore = Math.max(this.highScore, this.score);
 			this.game.restart = false;
+			this.tier = 0;
+			this.topOfMap = 0;
+			this.highScore = Math.max(this.highScore, this.score);
 			this.clearEntities();
-			this.loadLevelOne();
-			this.y = -(PARAMS.PAGE_HEIGHT);	
+			this.loadLevel();
+			this.y = -(PARAMS.PAGE_HEIGHT);
+		}
+		
+		// Generate new level on approach
+		if (this.y <= this.topOfMap) {
+			this.tier++;
+			this.loadLevel();
 		}
 		
 		// Timer, time score
@@ -108,44 +126,69 @@ class SceneManager {
 
         if (this.y > this.game.player.y - pushpoint) this.y = this.game.player.y - pushpoint;
 		
+		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y && this.game.player.invulnerable) this.game.player.y -= PARAMS.PAGE_HEIGHT * (3 / 4);
 		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y) this.game.restart = true;
 	};
 	
 	draw(ctx) {
+		// LEFT ALIGN TEXT //
+		ctx.textAlign  = "left";
+		// Score Text
+		let tierText = "LEVEL: " + (this.tier + 1) + " ";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Impact";
+		ctx.strokeText(tierText, 50, 50);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(tierText, 50, 50);
+		
+		// CENTER ALIGN TEXT //
 		ctx.textAlign  = "center";
 		// Score Text
 		let scoreText = "SCORE: " + this.score + " ";
 		ctx.strokeStyle = 'White';
-		ctx.font = "30px Arial";
+		ctx.font = "30px Impact";
 		ctx.strokeText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(scoreText, PARAMS.PAGE_WIDTH / 2, 50);
 		// High Score Text
-		let highScoreText = "HIGH SCORE: " + this.highScore;
+		let highScoreText = "";
+		if (this.game.player.y > -PARAMS.PAGE_HEIGHT) highScoreText = "HIGH SCORE: " + this.highScore;
 		ctx.strokeStyle = 'White';
-		ctx.font = "30px Arial";
+		ctx.font = "50px Impact";
 		ctx.strokeText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(highScoreText, PARAMS.PAGE_WIDTH / 2, 100);
-		// Speed Up Text
-		let timeText = "";
-		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(11 - this.elapsedTime) + " ";
-		ctx.strokeStyle = 'White';
-		ctx.font = "30px Arial";
-		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
-		ctx.strokeStyle = 'Black';
-		ctx.fillText(timeText, PARAMS.PAGE_WIDTH / 2, 150);
 		// Controls Text
 		let controlText1 = "";
 		let controlText2 = "";
 		if (this.game.player.y > -125) controlText1 = "A & D move left and right. W or Space Bar jumps.";
 		if (this.game.player.y > -125) controlText2 = "Jumping off the wall gives you an extra boost!";
 		ctx.strokeStyle = 'White';
-		ctx.font = "30px Arial";
+		ctx.font = "30px Impact";
 		ctx.strokeText(controlText1, PARAMS.PAGE_WIDTH / 2, 200);
 		ctx.strokeText(controlText2, PARAMS.PAGE_WIDTH / 2, 240);
 		ctx.strokeStyle = 'Black';
 		ctx.fillText(controlText1, PARAMS.PAGE_WIDTH / 2, 200);
 		ctx.fillText(controlText2, PARAMS.PAGE_WIDTH / 2, 240);
+		
+		// RIGHT ALIGN TEXT //
+		ctx.textAlign  = "right";
+		// Speed Up Text
+		let timeText = "";
+		if (this.game.player.y < -125) timeText = "SPEED UP IN: 0:" + Math.floor(11 - this.elapsedTime) + " ";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Impact";
+		ctx.strokeText(timeText, PARAMS.PAGE_WIDTH- 50, 100);
+		ctx.strokeStyle = 'Black';
+		if (Math.floor(11 - this.elapsedTime) < 3) ctx.strokeStyle = 'Red';
+		ctx.fillText(timeText, PARAMS.PAGE_WIDTH- 50, 100);
+		// Air Time Text
+		let airTimeText = "";
+		airTimeText = "AIR TIME: " + Math.floor( this.game.player.airTime * 100 ) + " ";
+		ctx.strokeStyle = 'White';
+		ctx.font = "30px Impact";
+		ctx.strokeText(airTimeText, PARAMS.PAGE_WIDTH - 50, 50);
+		ctx.strokeStyle = 'Black';
+		ctx.fillText(airTimeText, PARAMS.PAGE_WIDTH - 50, 50);
 	};
 }

@@ -23,6 +23,8 @@ class Player {
 		this.ySpeed = 0;
 		this.isSpinning = false;
 		this.grounded = false;
+		this.airTime = 0;
+		this.invulnerable = false;
 		// Assign self to game object
 		this.game.player = this;
 		
@@ -46,6 +48,12 @@ class Player {
 	}
 	
 	update () {
+		if (document.getElementById("myInvulnerable").checked) {
+			this.invulnerable = true;
+		} else {
+			this.invulnerable = false;
+		}
+		
 		// Gravity
 		this.ySpeed += this.GRAVITY;
 		
@@ -118,6 +126,8 @@ class Player {
 				}
 			}
 		});
+		// airtime update
+		if (this.isSpinning) this.airTime += this.game.clockTick;
 	}
 	
 	draw(ctx) {

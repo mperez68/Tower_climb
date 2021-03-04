@@ -48,13 +48,14 @@ class GameEngine {
 				case "KeyW":
 				case "ArrowUp":
 				case "Space":
+					event.preventDefault();
 					if (!that.up) {
 						that.up = true;
-						console.log('Jump Start');
+						//console.log('Jump Start');
 						setTimeout(function () {
 							that.up = false;
-							console.log('Jump End');
-						}, 100)
+							//console.log('Jump End');
+						}, 200)
 					}
 					break;
 				case "KeyS":
@@ -133,6 +134,10 @@ class GameEngine {
 
     addEntity(entity) {
         this.entities.push(entity);
+    };
+
+    addEntityToFront(entity) {
+        this.entities.unshift(entity);
     };
 
     draw() {
