@@ -25,6 +25,7 @@ class Player {
 		this.grounded = false;
 		this.airTime = 0;
 		this.invulnerable = false;
+		this.jumpAudioQueue = 1;
 		// Assign self to game object
 		this.game.player = this;
 		
@@ -79,6 +80,8 @@ class Player {
 				this.game.up = false;
 				this.grounded = false;
 				this.ySpeed -= this.JUMP;
+				ASSET_MANAGER.playAsset("./audio/jump" + this.jumpAudioQueue + ".mp3");
+				this.jumpAudioQueue = ((this.jumpAudioQueue - 1) % 2) + 1;
 			}
 		} else if (this.game.down) {
 			// nothing
@@ -101,6 +104,7 @@ class Player {
 				this.isSpinning = true;
 				this.xSpeed += this.xSpeed;
 				this.ySpeed -= this.JUMP * Math.abs(this.xSpeed / this.MAX_X);
+				ASSET_MANAGER.playAsset("./audio/walljump.mp3");
 			}
 			this.x = Math.round(this.x / PARAMS.PAGE_WIDTH) * (PARAMS.PAGE_WIDTH - this.WIDTH * this.SCALE);
 			//console.log("bounce @ (" + this.x + "," + this.y + ")");

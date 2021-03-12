@@ -1,6 +1,8 @@
 class SceneManager {
 	constructor(game) {
 		// Constants
+		this.PLAY_MUSIC_PATH = "./audio/playmusic.mp3";
+		this.IDLE_MUSIC_PATH = "./audio/idlemusic.mp3";
 		this.SCROLL_INCREMENT = 0.25;
 		
 		Object.assign(this, { game });
@@ -17,12 +19,10 @@ class SceneManager {
 		this.running = false;
 		this.topOfMap = 0;
 		this.tier = 0;
-		
-		// HUD variables
-		//
-		
-		// HUD animations
-		//
+		this.musicMode = 0; // 0 is silent, 1 is idle music, 2 is climb music
+		this.currentMusic = 0; // 0 is silent, 1 is idle music, 2 is climb music
+
+		ASSET_MANAGER.adjustVolume(0.15);
 		
 		this.loadLevel();
 	};
@@ -64,7 +64,7 @@ class SceneManager {
 			yPointer += PARAMS.BG_WIDTH;
 		}
 		
-		// Player
+		// Tier 0 extras
 		if (this.tier == 0) {
 			this.bestY = 0;
 			this.score = 0;
@@ -89,6 +89,7 @@ class SceneManager {
 			this.clearEntities();
 			this.loadLevel();
 			this.y = -(PARAMS.PAGE_HEIGHT);
+			this.musicMode = 1;
 		}
 		
 		// Generate new level on approach
@@ -123,11 +124,39 @@ class SceneManager {
 		
 		// Follow player
 		let pushpoint = PARAMS.PAGE_WIDTH / 4;
-
         if (this.y > this.game.player.y - pushpoint) this.y = this.game.player.y - pushpoint;
 		
+		// Invulnerable reset
 		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y && this.game.player.invulnerable) this.game.player.y -= PARAMS.PAGE_HEIGHT * (3 / 4);
-		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y) this.game.restart = true;
+		
+		// Handle audio
+		if (this.musicMode != 2 && this.game.player.y < -125) {
+			this.musicMode = 2;
+		}
+		
+		if (this.musicMode == 1 && this.currentMusic != 1) {
+			console.log("switch to idle music");
+			this.currentMusic = 1;
+			ASSET_MANAGER.pauseAsset(this.PLAY_MUSIC_PATH);
+			ASSET_MANAGER.playAsset(this.IDLE_MUSIC_PATH);
+		} else if (this.musicMode == 2 && this.currentMusic != 2) {
+			console.log("switch to climbing music");
+			this.currentMusic = 2;
+			ASSET_MANAGER.playAsset(this.PLAY_MUSIC_PATH);
+			ASSET_MANAGER.pauseAsset(this.IDLE_MUSIC_PATH);
+		} else if (this.musicMode == 0 && this.currentMusic != 0){
+			console.log("switch to no music");
+			this.currentMusic = 0;
+			ASSET_MANAGER.pauseAsset(this.PLAY_MUSIC_PATH);
+			ASSET_MANAGER.pauseAsset(this.IDLE_MUSIC_PATH);
+		}
+		
+		// death
+		if (this.y + PARAMS.PAGE_HEIGHT < this.game.player.y) { 
+			this.game.restart = true;
+			console.log("pause all music");
+			this.musicMode = 0;
+		}
 	};
 	
 	draw(ctx) {

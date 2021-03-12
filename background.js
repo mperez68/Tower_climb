@@ -5,7 +5,7 @@ class Background {
 		Object.assign(this, { game, x, y, tier });
 		
 		//console.log("./sprites/Background-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
-		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Background-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
+		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Background-" + this.pad(tier % PARAMS.VERSIONS, 2) + ".png");
 		
 		this.animation = new Animator(this.spritesheet, 0, 0, this.WIDTH, this.HEIGHT, 1, 1, 0, false, true);
 	}
@@ -34,8 +34,7 @@ class Platform {
 		
 		Object.assign(this, { game, x, y, tier });
 		
-		//console.log("./sprites/Platform-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
-		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Platform-" + this.pad(tier % PARAMS.VERSIONS, 1) + ".png");
+		this.spritesheet = ASSET_MANAGER.getAsset("./sprites/Platform-" + this.pad(tier % PARAMS.VERSIONS, 2) + ".png");
 		this.updateBB();
 	}
 	
@@ -44,7 +43,6 @@ class Platform {
 	}
 	
 	update() {
-		//if (this.game.camera.y + PARAMS.PAGE_HEIGHT < this.y) console.log("deleting old platforms");
 		if (this.game.camera.y + PARAMS.PAGE_HEIGHT < this.y) this.removeFromWorld = true;
 		this.updateBB();
 	}
